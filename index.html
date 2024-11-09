@@ -8,17 +8,17 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('https://cdn.photoroom.com/v2/image-cache?path=gs://background-7ef44.appspot.com/backgrounds_v3/white/06_-_white.jpg'); /* Thay URL này bằng đường dẫn đến ảnh của bạn */
-            background-size: cover; /* Ảnh phủ kín màn hình */
-            background-position: url('https://ifbb.com/wp-content/uploads/2018/05/BANNER-web2024-scaled.jpg'); /* Căn giữa ảnh */
-            background-attachment: fixed; /* Giữ ảnh nền cố định khi cuộn */
+            background-image: url('https://www.ifbbpro.com/wp-content/uploads/2024/02/2024praguePROv3_111624_75-1536x653.jpg'); /* Thay URL này bằng đường dẫn đến ảnh của bạn */
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
         }
 
         header {
-            background-color: rgba(40, 44, 52, 0.85); /* Nền header với độ mờ */
+            background-color: rgba(40, 44, 52, 0.85);
             color: white;
             text-align: center;
             padding: 50px;
@@ -50,7 +50,7 @@
         }
 
         .card {
-            background-color: rgba(255, 255, 255, 0.9); /* Thẻ trắng mờ */
+            background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             padding: 30px;
@@ -85,7 +85,7 @@
         }
 
         footer {
-            background-color: rgba(40, 44, 52, 0.85); /* Nền footer mờ */
+            background-color: rgba(40, 44, 52, 0.85);
             color: white;
             text-align: center;
             padding: 20px;
@@ -94,7 +94,7 @@
             width: 100%;
         }
 
-        /* Animation for scrolling effect */
+ 
         @keyframes fadeIn {
             0% {
                 opacity: 0;
@@ -106,7 +106,7 @@
             }
         }
 
-        /* Animation for cards */
+
         .card {
             animation: fadeIn 0.8s ease-out forwards;
         }
@@ -146,7 +146,7 @@
     </footer>
 
     <script>
-        // JavaScript for scroll-triggered animation
+      
         const cards = document.querySelectorAll('.card');
 
         const showCard = (card) => {
