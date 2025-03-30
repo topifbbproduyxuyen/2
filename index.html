@@ -1,169 +1,70 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Vinh Danh Top 3 IFBB PRO</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-image: url('https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-6/398185253_945300643620623_7032724690085011534_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=5SFkbONP-4IQ7kNvgHL6NZG&_nc_zt=23&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=AdCez0Q-wFwVo-T7OGzQpT2&oh=00_AYAwDqbw0EMu-yHxPBzYVjqOfeI1pXaBFFUCs4FGMYiQtQ&oe=6735030F'); /* Thay URL này bằng đường dẫn đến ảnh của bạn */
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+import pygame
+import random
 
-        header {
-            background-color: rgba(40, 44, 52, 0.85);
-            color: white;
-            text-align: center;
-            padding: 50px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+# Khởi tạo pygame
+pygame.init()
 
-        header h1 {
-            font-size: 3em;
-            margin: 0;
-        }
+# Cấu hình màn hình
+WIDTH, HEIGHT = 400, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Flappy Bird")
 
-        section {
-            padding: 80px 20px;
-            text-align: center;
-            color: #333;
-        }
+# Màu sắc
+WHITE = (255, 255, 255)
+BLUE = (135, 206, 250)
 
-        section h2 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: white;
-        }
+# Tải hình ảnh
+bird_img = pygame.image.load("bird.png")
+bird_img = pygame.transform.scale(bird_img, (50, 35))
 
-        .card-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
+# Cấu hình trò chơi
+gravity = 0.5
+bird_movement = 0
+bird_x, bird_y = 100, HEIGHT // 2
 
-        .card {
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 30px;
-            width: 300px;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.5s ease-in-out;
-        }
+pipe_width = 70
+pipe_gap = 150
+pipe_x = WIDTH
+pipe_height = random.randint(100, 400)
+pipe_speed = 3
 
-        .card img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
+clock = pygame.time.Clock()
+running = True
 
-        .card h3 {
-            font-size: 1.8em;
-            color: #333;
-            margin-bottom: 15px;
-        }
+while running:
+    screen.fill(BLUE)
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                bird_movement = -8
+    
+    # Tạo lực hấp dẫn
+    bird_movement += gravity
+    bird_y += bird_movement
+    
+    # Vẽ chim
+    screen.blit(bird_img, (bird_x, bird_y))
+    
+    # Vẽ ống
+    pygame.draw.rect(screen, WHITE, (pipe_x, 0, pipe_width, pipe_height))
+    pygame.draw.rect(screen, WHITE, (pipe_x, pipe_height + pipe_gap, pipe_width, HEIGHT - pipe_height - pipe_gap))
+    pipe_x -= pipe_speed
+    
+    # Kiểm tra va chạm
+    if bird_y >= HEIGHT or bird_y <= 0 or (
+        pipe_x <= bird_x + 50 <= pipe_x + pipe_width and 
+        (bird_y <= pipe_height or bird_y + 35 >= pipe_height + pipe_gap)):
+        running = False
+    
+    # Tạo ống mới
+    if pipe_x + pipe_width < 0:
+        pipe_x = WIDTH
+        pipe_height = random.randint(100, 400)
+    
+    pygame.display.update()
+    clock.tick(30)
 
-        .card p {
-            font-size: 1.2em;
-            color: #666;
-        }
-
-        .show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        footer {
-            background-color: rgba(40, 44, 52, 0.85);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
- 
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-
-        .card {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Top 3 IFBB PRO Duy Xuyên</h1>
-        <p>Chúng Tôi Tự Hào Giới Thiệu Những Thành Tích Xuất Sắc Từ Các Cá Nhân.</p>
-    </header>
-
-    <section>
-        <h2></h2>
-        <div class="card-container">
-            <div class="card">
-                <img src="https://scontent.fsgn5-14.fna.fbcdn.net/v/t1.6435-9/76995722_183828039463437_6533188158262083584_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=PKpR9AQDofIQ7kNvgGvYkCS&_nc_zt=23&_nc_ht=scontent.fsgn5-14.fna&_nc_gid=AKX8733FGRyItVN08aXFllm&oh=00_AYC8WLcCr9UYvOQd-z-dnZKJmHVChg3hWYpyEKohJKdAWQ&oe=67569792" alt="Person 1">
-                <h3>Lương Công Thành</h3>
-                <p>Có những thành tựu ăn nhậu lớn trong suốt mấy năm qua, nay anh đã thay đổi qua con đường thi đấu chuyên nghiệp.</p>
-            </div>
-
-            <div class="card">
-                <img src="https://scontent.xx.fbcdn.net/v/t1.15752-9/455703910_1049461636559827_4804752521119434645_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=0024fc&_nc_ohc=HJZwnc-v4egQ7kNvgHyg27m&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.xx&oh=03_Q7cD1QGGxTrvZEpXIeShzZjcSSrfroB9ncyFTZ4MLFd0RxL--g&oe=67567178" alt="Person 2">
-                <h3>Võ Công Nhật</h3>
-                <p>Ông trùm trade, chiến thần thổi nến, anh ấy cũng đã thay đổi chuyển sang qua bộ môn thể hình để có cơ hội có người yêu.</p>
-            </div>
-
-            <div class="card">
-                <img src="https://scontent.fsgn5-5.fna.fbcdn.net/v/t39.30808-6/245389703_930638864329150_8629435344889970037_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GYviUohA-TMQ7kNvgEHOsZY&_nc_zt=23&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=Ak2ohu4G6FfKG_Bt27QJdZP&oh=00_AYDxXVMl19DcQgYP8bQ0w1iXKNMTjwMaHU__XyD73tMmiw&oe=6734DA91" alt="Person 3">
-                <h3>Phạm Thanh Tùng</h3>
-                <p>Chiến thần trap, sở hữu cây B52 dài nhất mọi thời đại, anh cũng chuyển qua lĩnh vực GYM để thay đổi bản thân mình</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Vinh Danh Anh Em Gym Chúa Duy Xuyên</p>
-    </footer>
-
-    <script>
-      
-        const cards = document.querySelectorAll('.card');
-
-        const showCard = (card) => {
-            card.classList.add('show');
-        };
-
-        window.addEventListener('scroll', () => {
-            cards.forEach((card) => {
-                const cardTop = card.getBoundingClientRect().top;
-                const windowHeight = window.innerHeight;
-
-                if (cardTop < windowHeight - 100) {
-                    showCard(card);
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+pygame.quit()
