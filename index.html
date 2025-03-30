@@ -1,70 +1,82 @@
-import pygame
-import random
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body { text-align: center; background-color: skyblue; }
+        canvas { background-color: white; }
+    </style>
+</head>
+<body>
+    <h1>Flappy Bird</h1>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        let bird = { x: 50, y: 250, width: 30, height: 30, gravity: 0.6, lift: -10, velocity: 0 };
+        let pipes = [];
+        let frame = 0;
+        let gameRunning = true;
 
-# Khởi tạo pygame
-pygame.init()
+        function drawBird() {
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+        }
+        
+        function drawPipes() {
+            ctx.fillStyle = "green";
+            pipes.forEach(pipe => {
+                ctx.fillRect(pipe.x, 0, pipe.width, pipe.height);
+                ctx.fillRect(pipe.x, pipe.height + pipe.gap, pipe.width, canvas.height - pipe.height - pipe.gap);
+            });
+        }
+        
+        function update() {
+            if (!gameRunning) return;
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
 
-# Cấu hình màn hình
-WIDTH, HEIGHT = 400, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Flappy Bird")
+            if (bird.y + bird.height >= canvas.height || bird.y <= 0) {
+                gameRunning = false;
+            }
 
-# Màu sắc
-WHITE = (255, 255, 255)
-BLUE = (135, 206, 250)
+            if (frame % 90 === 0) {
+                let pipeHeight = Math.random() * (canvas.height / 2);
+                pipes.push({ x: canvas.width, height: pipeHeight, width: 50, gap: 150 });
+            }
 
-# Tải hình ảnh
-bird_img = pygame.image.load("bird.png")
-bird_img = pygame.transform.scale(bird_img, (50, 35))
+            pipes.forEach(pipe => {
+                pipe.x -= 2;
+                if (bird.x < pipe.x + pipe.width && bird.x + bird.width > pipe.x && 
+                    (bird.y < pipe.height || bird.y + bird.height > pipe.height + pipe.gap)) {
+                    gameRunning = false;
+                }
+            });
 
-# Cấu hình trò chơi
-gravity = 0.5
-bird_movement = 0
-bird_x, bird_y = 100, HEIGHT // 2
-
-pipe_width = 70
-pipe_gap = 150
-pipe_x = WIDTH
-pipe_height = random.randint(100, 400)
-pipe_speed = 3
-
-clock = pygame.time.Clock()
-running = True
-
-while running:
-    screen.fill(BLUE)
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                bird_movement = -8
-    
-    # Tạo lực hấp dẫn
-    bird_movement += gravity
-    bird_y += bird_movement
-    
-    # Vẽ chim
-    screen.blit(bird_img, (bird_x, bird_y))
-    
-    # Vẽ ống
-    pygame.draw.rect(screen, WHITE, (pipe_x, 0, pipe_width, pipe_height))
-    pygame.draw.rect(screen, WHITE, (pipe_x, pipe_height + pipe_gap, pipe_width, HEIGHT - pipe_height - pipe_gap))
-    pipe_x -= pipe_speed
-    
-    # Kiểm tra va chạm
-    if bird_y >= HEIGHT or bird_y <= 0 or (
-        pipe_x <= bird_x + 50 <= pipe_x + pipe_width and 
-        (bird_y <= pipe_height or bird_y + 35 >= pipe_height + pipe_gap)):
-        running = False
-    
-    # Tạo ống mới
-    if pipe_x + pipe_width < 0:
-        pipe_x = WIDTH
-        pipe_height = random.randint(100, 400)
-    
-    pygame.display.update()
-    clock.tick(30)
-
-pygame.quit()
+            pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
+            frame++;
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBird();
+            drawPipes();
+        }
+        
+        function gameLoop() {
+            update();
+            draw();
+            if (gameRunning) requestAnimationFrame(gameLoop);
+        }
+        
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space") bird.velocity = bird.lift;
+        });
+        
+        gameLoop();
+    </script>
+</body>
+</html>
